@@ -1,0 +1,54 @@
+.plan-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0001;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  margin: 1rem;
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.plan-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #111;
+}
+.plan-price {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-bottom: 0.2rem;
+  color: #222;
+}
+.plan-renew {
+  font-size: 0.95rem;
+  color: #444;
+  margin-bottom: 0.7rem;
+}
+.plan-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.2rem 0;
+  color: #222;
+  font-size: 0.98rem;
+}
+.plan-features li {
+  margin-bottom: 0.3rem;
+}
+.plan-btn {
+  align-self: center;
+  background: #5a6bfa;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.7rem 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background 0.2s;
+}
+.plan-btn:hover {
+  background: #3b4edb;
+}
