@@ -1,0 +1,49 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #e7e2ee;
+  padding: 0.5rem 2rem;
+  border-radius: 20px; /* Ovalada arriba y abajo */
+  width: 90vw;
+  margin-bottom: 2rem;
+  margin-top: 0.5rem; /* Menos margen superior */
+  box-shadow: 0 2px 8px #0001;
+}
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+.navbar-logo {
+  width: 56px;   /* Más grande */
+  height: 56px;  /* Más grande */
+  margin-right: 0.7rem;
+  border-radius: 50%; /* Logo circular */
+  object-fit: cover;
+  background: #fff;
+  border: 2px solid #d1d1d1;
+}
+.navbar-title {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #222;
+}
+.navbar-center {
+  display: flex;
+  gap: 6rem; /* Más separación entre los elementos */
+}
+.navbar-dropdown {
+  font-size: 1rem;
+  color: #222;
+  cursor: pointer;
+}
+.navbar-right .navbar-login {
+  background: #5a6bfa;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 1rem;
+}
