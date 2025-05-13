@@ -5,14 +5,17 @@ import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import loginRoutes from './routes/login_admin/loginRoutes';
 import dashboardRoutes from './routes/login_admin/dashboardRoutes';
+import AppRoutes from './routes/AppRoutes';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Rutas de login y dashboard */}
         {loginRoutes}
         {dashboardRoutes}
-        {/* otras rutas */}
+        {/* Rutas de AppRoutes */}
+        <Route path="*" element={<AppRoutes />} />
       </Routes>
     </BrowserRouter>
   );
