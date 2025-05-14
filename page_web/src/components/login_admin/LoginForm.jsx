@@ -2,7 +2,7 @@ import React from 'react';
 import '../../styles/login_admin/loginStyles.css';
 
 const LoginForm = () => (
-  <form className="login-form">
+  <form className="logins-form">
     <div className="form-group">
       <label htmlFor="email">Correo electrónico</label>
       <input type="email" id="email" name="email" required />
@@ -14,7 +14,7 @@ const LoginForm = () => (
     <div className="form-links">
       <a href="#">¿Olvidó su contraseña?</a>
     </div>
-    <button type="submit" className="login-btn">Iniciar Sesion</button>
+    <button type="submit" className="logins-btn">Iniciar Sesion</button>
   </form>
 );
 

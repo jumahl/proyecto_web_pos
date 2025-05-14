@@ -14,7 +14,7 @@ function App() {
         {/* Rutas de login y dashboard */}
         {loginRoutes}
         {dashboardRoutes}
-        {/* Rutas de AppRoutes */}
+        {/* Rutas generales */}
         <Route path="*" element={<AppRoutes />} />
       </Routes>
     </BrowserRouter>
