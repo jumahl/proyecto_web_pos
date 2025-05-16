@@ -3,10 +3,16 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const CompanyModel = require('../models/companyModel');
 const AdminModel = require('../models/adminModel');
+const logger = require('../utils/logger'); 
+
 
 // Utilidad para generar JWT
 function generateToken(payload) {
-  return jwt.sign(payload, process.env.JWT_SECRET || 'secret', { expiresIn: '8h' });
+  if (!process.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET no está definido en las variables de entorno');
+  }
+
+  return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 }
 
 exports.registerCompany = async (req, res, next) => {
@@ -15,6 +21,7 @@ exports.registerCompany = async (req, res, next) => {
   try {
     const exists = await CompanyModel.existsByNitOrEmail(nit, email);
     if (exists) {
+      logger.warn(`[REGISTER_COMPANY][FAIL] Empresa ya registrada`, { email, nit, ip: req.ip });
       const error = new Error('Empresa ya registrada');
       error.status = 400;
       throw error;
@@ -22,6 +29,7 @@ exports.registerCompany = async (req, res, next) => {
 
     const plan = await pool.query('SELECT * FROM plan WHERE id = $1', [plan_id]);
     if (plan.rows.length === 0) {
+      logger.warn(`[REGISTER_COMPANY][FAIL] Plan no válido`, { plan_id, email, nit, ip: req.ip });
       const error = new Error('Plan no válido');
       error.status = 400;
       throw error;
@@ -48,10 +56,12 @@ exports.registerCompany = async (req, res, next) => {
 
     await pool.query('COMMIT');
 
+    logger.info(`[REGISTER_COMPANY][SUCCESS] Empresa registrada correctamente`, { email, nit, plan_id, ip: req.ip });
     res.status(201).json({ message: 'Empresa y suscripción creadas correctamente' });
   } catch (err) {
     if (transactionStarted) await pool.query('ROLLBACK');
-    next(err); // Pasa el error al middleware global
+    logger.error(`[REGISTER_COMPANY][ERROR] ${err.message}`, { email, nit, plan_id, ip: req.ip });
+    next(err);
   }
 };
 
@@ -60,6 +70,7 @@ exports.loginCompany = async (req, res, next) => {
   try {
     const company = await CompanyModel.findByEmail(email);
     if (!company) {
+      logger.warn(`[LOGIN_COMPANY][FAIL] Email no encontrado`, { email, ip: req.ip });
       const error = new Error('Credenciales inválidas');
       error.status = 400;
       throw error;
@@ -67,41 +78,40 @@ exports.loginCompany = async (req, res, next) => {
 
     const valid = await bcrypt.compare(password, company.password);
     if (!valid) {
+      logger.warn(`[LOGIN_COMPANY][FAIL] Contraseña incorrecta`, { email, ip: req.ip });
       const error = new Error('Credenciales inválidas');
       error.status = 400;
       throw error;
     }
 
     const token = generateToken({ nit: company.nit, role: 'company' });
+    logger.info(`[LOGIN_COMPANY][SUCCESS] Login exitoso para empresa`, { email, nit: company.nit, ip: req.ip });
     res.json({ token, company: { nit: company.nit, name: company.name, email: company.email } });
   } catch (err) {
+    logger.error(`[LOGIN_COMPANY][ERROR] ${err.message}`, { email, ip: req.ip });
     next(err);
   }
 };
 
 exports.registerAdmin = async (req, res, next) => {
-  const { name, email, password, role_id } = req.body;
+  const { name, email, password } = req.body;
   try {
     const exists = await AdminModel.findByEmail(email);
     if (exists) {
+      logger.warn(`[REGISTER_ADMIN][FAIL] Admin ya registrado`, { email, ip: req.ip });
       const error = new Error('Administrador ya registrado');
-      error.status = 400;
-      throw error;
-    }
-
-    const role = await pool.query('SELECT * FROM role WHERE id = $1 AND scope = $2', [role_id, 'system']);
-    if (role.rows.length === 0) {
-      const error = new Error('Rol no válido para administrador');
       error.status = 400;
       throw error;
     }
 
     const hashed = await bcrypt.hash(password, 10);
 
-    await AdminModel.create({ name, email, password: hashed, role_id });
+    await AdminModel.create({ name, email, password: hashed });
 
+    logger.info(`[REGISTER_ADMIN][SUCCESS] Administrador registrado correctamente`, { email, ip: req.ip });
     res.status(201).json({ message: 'Administrador registrado correctamente' });
   } catch (err) {
+    logger.error(`[REGISTER_ADMIN][ERROR] ${err.message}`, { email, ip: req.ip });
     next(err);
   }
 };
@@ -111,6 +121,7 @@ exports.loginAdmin = async (req, res, next) => {
   try {
     const admin = await AdminModel.findByEmail(email);
     if (!admin) {
+      logger.warn(`[LOGIN_ADMIN][FAIL] Email no encontrado`, { email, ip: req.ip });
       const error = new Error('Credenciales inválidas');
       error.status = 400;
       throw error;
@@ -118,14 +129,17 @@ exports.loginAdmin = async (req, res, next) => {
 
     const valid = await bcrypt.compare(password, admin.password);
     if (!valid) {
+      logger.warn(`[LOGIN_ADMIN][FAIL] Contraseña incorrecta`, { email, ip: req.ip });
       const error = new Error('Credenciales inválidas');
       error.status = 400;
       throw error;
     }
 
     const token = generateToken({ id: admin.id, role: 'admin' });
+    logger.info(`[LOGIN_ADMIN][SUCCESS] Login exitoso para admin`, { email, id: admin.id, ip: req.ip });
     res.json({ token, admin: { id: admin.id, name: admin.name, email: admin.email } });
   } catch (err) {
+    logger.error(`[LOGIN_ADMIN][ERROR] ${err.message}`, { email, ip: req.ip });
     next(err);
   }
 };

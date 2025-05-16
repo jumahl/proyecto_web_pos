@@ -14,8 +14,19 @@ const app = express();
 app.use(express.json());
 
 // Configuración de CORS
+const allowedOrigins = [
+  'http://localhost:5173',
+];
+
 app.use(cors({
-  origin: '*', // Cambia esto por el dominio de tu frontend en producción
+  origin: function (origin, callback) {
+    // Permitir peticiones sin origen (como Postman) o si está en la lista
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('No permitido por CORS'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));

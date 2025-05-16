@@ -1,13 +1,20 @@
-
 function errorHandler(err, req, res, next) {
+  // Log completo solo en el servidor
   console.error('Error:', err);
 
-  // Puedes personalizar el status y el mensaje según el tipo de error
+  // Determina el status
   const status = err.status || 500;
-  const message = status === 500
-    ? 'Ocurrió un error interno. Intenta más tarde.'
-    : err.message;
 
+  // Mensaje seguro para el cliente
+  let message;
+  if (status === 500) {
+    message = 'Ocurrió un error interno. Intenta más tarde.';
+  } else {
+    // Si el error es de validación o de negocio, muestra solo el mensaje seguro
+    message = err.message || 'Ocurrió un error.';
+  }
+
+  // Nunca envíes err.stack ni detalles internos al cliente
   res.status(status).json({ message });
 }
 

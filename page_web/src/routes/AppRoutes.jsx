@@ -3,6 +3,7 @@ import PlansPage from '../pages/PlansPage'
 import LoginPage from '../pages/LoginPage'
 import Register from '../pages/Register'
 import Dashboard from '../pages/Dashboard'
+import ProtectedRoute from './ProtectedRoute'
 
 export default function AppRoutes() {
   return (
@@ -11,7 +12,14 @@ export default function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/Planes" element={<PlansPage />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   )
 }

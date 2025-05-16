@@ -11,7 +11,12 @@ const DashboardPage = () => {
     document.title = 'DashboardAdmin';
   }, []);
 
-  //contenido de la pagina
+  // Función para cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/loginadmin'; // Cambia la ruta si tu login de admin es diferente
+  };
+
   return (
     <div className="dashboard-bg">
       <header className="dashboard-header">
@@ -24,7 +29,7 @@ const DashboardPage = () => {
           <span>Estadísticas ▼</span>
           <span>Configuracion ▼</span>
         </nav>
-        <button className="dashboard-logout-btn">Cerrar Sesion</button>
+        <button className="dashboard-logout-btn" onClick={handleLogout}>Cerrar Sesion</button>
       </header>
       <div className="dashboard-container">
         <main className="dashboard-main">

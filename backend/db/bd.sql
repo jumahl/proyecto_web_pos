@@ -92,7 +92,7 @@ CREATE TABLE role_permission
 );
 
 -- User table
-CREATE TABLE user
+CREATE TABLE "user"
 (
     id SERIAL PRIMARY KEY,
     company_nit VARCHAR(20) REFERENCES company(nit),
@@ -106,7 +106,7 @@ CREATE TABLE user
 );
 
 CREATE TRIGGER user_updated_at
-BEFORE UPDATE ON user
+BEFORE UPDATE ON "user"
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at();
 
@@ -203,7 +203,6 @@ CREATE TABLE admin
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
     password TEXT NOT NULL,
-    role_id INT NOT NULL REFERENCES role(id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );
@@ -221,7 +220,7 @@ CREATE TABLE product_changes_log
     field VARCHAR(50) NOT NULL,
     old_value TEXT NOT NULL,
     new_value TEXT NOT NULL,
-    user_id INT NOT NULL REFERENCES user(id),
+    user_id INT NOT NULL REFERENCES "user"(id),
     date TIMESTAMP NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -231,4 +230,21 @@ CREATE INDEX idx_company_name ON company (name);
 CREATE INDEX idx_product_company ON product (company_nit);
 CREATE INDEX idx_sale_date ON sale (date);
 CREATE INDEX idx_client_company ON client (company_nit);
-[file content end]
+
+
+
+
+-- Plan Básico (ideal para pequeñas empresas)
+INSERT INTO plan (name, price, max_products, max_users) 
+VALUES ('Básico', 10000, 100, 3);
+
+-- Plan Estándar (empresas medianas)
+INSERT INTO plan (name, price, max_products, max_users) 
+VALUES ('Estándar', 15000, 500, 10);
+
+-- Plan Premium (sin límites)
+INSERT INTO plan (name, price, max_products, max_users) 
+VALUES ('Premium', 20000, 9999, 50);  -- 9999 = "ilimitado" en la práctica
+
+
+
