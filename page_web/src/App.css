@@ -1,7 +1,8 @@
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  margin: 0; /* Eliminar márgenes */
+  padding: 0; /* Eliminar padding */
+  max-width: 100%; /* Asegurar que ocupe todo el ancho */
+  height: 100%; /* Asegurar que ocupe todo el alto */
   text-align: center;
 }
 
