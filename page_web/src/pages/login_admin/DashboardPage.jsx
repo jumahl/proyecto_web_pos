@@ -50,7 +50,12 @@ const DashboardPage = () => {
     }
   }, [openMenu]);
 
-  //contenido de la pagina
+  // Función para cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/loginadmin'; // Cambia la ruta si tu login de admin es diferente
+  };
+
   return (
     <div className="min-h-screen bg-[#f5f6fa] flex flex-col items-center">
       <div className="w-full flex justify-center">
@@ -78,6 +83,7 @@ const DashboardPage = () => {
                 <div
                   ref={menuRef}
                   className="absolute left-1/2 -translate-x-1/2 mt-2 rounded-xl shadow-lg bg-white py-2 px-4 flex flex-col items-start border border-gray-200 z-50 min-w-[160px]"
+                  style={{ left: dropdownPos.left, top: dropdownPos.top }}
                 >
                   <div
                     className="px-4 py-2 hover:bg-white-100 cursor-pointer rounded w-full"
@@ -86,9 +92,9 @@ const DashboardPage = () => {
                       navigate('/empresasadmin');
                     }}
                   >
-                  <span role="img" aria-label="empresa">
-                         🏢
-                  </span>
+                    <span role="img" aria-label="empresa">
+                      🏢
+                    </span>
                     Empresas
                   </div>
                 </div>
@@ -102,13 +108,13 @@ const DashboardPage = () => {
                   setOpenMenu(openMenu === 'estadisticas' ? null : 'estadisticas')
                 }
               >
-                
                 Estadísticas ▼
               </span>
               {openMenu === 'estadisticas' && (
                 <div
                   ref={menuRef}
                   className="absolute left-1/2 -translate-x-1/2 mt-2 rounded-xl shadow-lg bg-white py-2 px-4 flex flex-col items-start border border-gray-200 z-50 min-w-[160px]"
+                  style={{ left: dropdownPos.left, top: dropdownPos.top }}
                 >
                   <div
                     className="px-4 py-2 hover:bg-white-100 cursor-pointer rounded w-full"
@@ -118,8 +124,8 @@ const DashboardPage = () => {
                     }}
                   >
                     <span role="img" aria-label="estadisticas">
-                              📊
-                    </span>   
+                      📊
+                    </span>
                     Estadísticas
                   </div>
                 </div>
@@ -129,7 +135,10 @@ const DashboardPage = () => {
               Configuracion ▼
             </span>
           </nav>
-          <button className="bg-[#2563eb] hover:bg-blue-700 text-white font-bold px-6 py-2 rounded-2xl transition ml-4 shadow-none">
+          <button
+            className="bg-[#2563eb] hover:bg-blue-700 text-white font-bold px-6 py-2 rounded-2xl transition ml-4 shadow-none"
+            onClick={handleLogout}
+          >
             Cerrar Sesion
           </button>
         </header>
