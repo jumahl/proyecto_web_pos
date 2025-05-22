@@ -4,6 +4,12 @@ import logo from '../assets/logoC.jpg';
 import { FaClipboardList, FaBox, FaExclamationTriangle, FaUsers } from 'react-icons/fa';
 
 const Dashboard = () => {
+  // Función para cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login'; // Cambia la ruta si tu login de empresa es diferente
+  };
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -22,7 +28,7 @@ const Dashboard = () => {
             <option>Ayuda</option>
           </select>
         </nav>
-        <button className="logout-button">Cerrar Sesión</button>
+        <button className="logout-button" onClick={handleLogout}>Cerrar Sesión</button>
       </header>
       <main className="dashboard-main">
         <div className="card-container">
