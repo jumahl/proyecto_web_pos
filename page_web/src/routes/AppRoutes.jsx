@@ -3,6 +3,9 @@ import PlansPage from '../pages/PlansPage'
 import LoginPage from '../pages/LoginPage'
 import Register from '../pages/Register'
 import Dashboard from '../pages/Dashboard'
+import ForgotPassword from '../pages/ForgotPassword'
+import Profile from '../pages/Profile'
+import SalesPage from '../pages/SalesPage'
 import ProtectedRoute from './ProtectedRoute'
 
 export default function AppRoutes() {
@@ -20,6 +23,9 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/ventas" element={<SalesPage />} />
     </Routes>
   )
 }
