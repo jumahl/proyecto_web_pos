@@ -4,6 +4,12 @@ import CardGrid from '../components/dashboard/CardGrid';
 import background from '../assets/fondo.jpg';
 
 const Dashboard = () => {
+  // Función para cerrar sesión
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login'; // Cambia la ruta si tu login de empresa es diferente
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-100 relative">
       {/* Fondo */}
@@ -16,7 +22,7 @@ const Dashboard = () => {
       ></div>
 
       {/* Navbar */}
-      <Navbar />
+      <Navbar onLogout={handleLogout} />
 
       {/* Main Content */}
       <main className="flex-1 flex justify-center items-center p-6 relative z-10">

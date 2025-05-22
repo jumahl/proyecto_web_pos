@@ -1,27 +1,75 @@
 import React, { useState } from 'react';
+import { registerCompany } from '../services/authService';
+
+const planOptions = [
+  { id: 1, label: 'Básico Mensual' },
+  { id: 2, label: 'Medio Mensual' },
+  { id: 3, label: 'Pro Mensual' }
+];
 
 const RegisterForm = () => {
-  const [formData, setFormData] = useState({
+  const [form, setForm] = useState({
     nit: '',
-    nombre: '',
-    correo: '',
-    contraseña: '',
-    confirmarContraseña: '',
-    plan: '',
-    acepto: false,
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    plan_id: '',
+    address: ''
   });
+  const [acepto, setAcepto] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleChange = (e) => {
+  const handleChange = e => {
     const { name, value, type, checked } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    if (type === 'checkbox') {
+      setAcepto(checked);
+    } else {
+      setForm({ ...form, [name]: value });
+    }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    console.log('Datos enviados:', formData);
+    setError('');
+    setSuccess('');
+    if (form.password !== form.confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+    if (!form.plan_id) {
+      setError('Selecciona un plan');
+      return;
+    }
+    if (!acepto) {
+      setError('Debes aceptar las políticas');
+      return;
+    }
+    const data = {
+      nit: form.nit,
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      address: form.address,
+      plan_id: form.plan_id
+    };
+    const res = await registerCompany(data);
+    if (res.message && res.message.includes('correctamente')) {
+      setSuccess('¡Registro exitoso! Ahora puedes iniciar sesión.');
+      setForm({
+        nit: '',
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        plan_id: '',
+        address: ''
+      });
+      setAcepto(false);
+    } else {
+      setError(res.message || 'Error al registrar');
+    }
   };
 
   return (
@@ -34,71 +82,77 @@ const RegisterForm = () => {
       <input
         type="text"
         name="nit"
-        value={formData.nit}
-        onChange={handleChange}
         placeholder="Nit"
+        value={form.nit}
+        onChange={handleChange}
         className="w-full bg-white border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         required
       />
-
       <input
         type="text"
-        name="nombre"
-        value={formData.nombre}
-        onChange={handleChange}
+        name="name"
         placeholder="Nombre"
+        value={form.name}
+        onChange={handleChange}
         className="w-full bg-white border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         required
       />
-
       <input
         type="email"
-        name="correo"
-        value={formData.correo}
-        onChange={handleChange}
+        name="email"
         placeholder="Correo electrónico"
+        value={form.email}
+        onChange={handleChange}
         className="w-full bg-white border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         required
       />
-
       <input
         type="password"
-        name="contraseña"
-        value={formData.contraseña}
-        onChange={handleChange}
+        name="password"
         placeholder="Contraseña"
+        value={form.password}
+        onChange={handleChange}
         className="w-full bg-white border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         required
       />
-
       <input
         type="password"
-        name="confirmarContraseña"
-        value={formData.confirmarContraseña}
-        onChange={handleChange}
+        name="confirmPassword"
         placeholder="Confirmar Contraseña"
+        value={form.confirmPassword}
+        onChange={handleChange}
         className="w-full bg-white border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         required
       />
-
+      <input
+        type="text"
+        name="address"
+        placeholder="Dirección"
+        value={form.address}
+        onChange={handleChange}
+        className="w-full bg-white border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
       <select
-        name="plan"
-        value={formData.plan}
+        name="plan_id"
+        value={form.plan_id}
         onChange={handleChange}
         className="w-full bg-white border border-gray-300 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
         required
       >
-        <option value="">Selecciona un Plan</option>
-        <option value="basico">Plan Básico</option>
-        <option value="intermedio">Plan Intermedio</option>
-        <option value="premium">Plan Premium</option>
+        <option value="" disabled>
+          Selecciona un Plan
+        </option>
+        {planOptions.map(plan => (
+          <option key={plan.id} value={plan.id}>
+            {plan.label}
+          </option>
+        ))}
       </select>
-
       <div className="flex items-start gap-2">
         <input
           type="checkbox"
           name="acepto"
-          checked={formData.acepto}
+          checked={acepto}
           onChange={handleChange}
           className="mt-1"
           required
@@ -109,16 +163,16 @@ const RegisterForm = () => {
           <a href="#" className="text-blue-600 underline">Privacidad</a>, y que la cuenta se creará automáticamente si no existe una previamente registrada.
         </p>
       </div>
-
       <button
         type="submit"
         className="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition"
       >
         Crear Cuenta
       </button>
-
+      {error && <div style={{ color: 'red', marginTop: '1rem' }}>{error}</div>}
+      {success && <div style={{ color: 'green', marginTop: '1rem' }}>{success}</div>}
       <p className="text-sm text-center mt-4">
-        ¿Ya tienes cuenta? <a href="#" className="text-blue-600 underline">Inicia Sesión</a>
+        ¿Ya tienes cuenta? <a href="/login" className="text-blue-600 underline">Inicia Sesión</a>
       </p>
     </form>
   );
